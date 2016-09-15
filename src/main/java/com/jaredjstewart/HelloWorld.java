@@ -21,22 +21,9 @@ public class HelloWorld {
                 .create("regionB");
 
         ExecutorService executorService = startExecutingSimulation(region);
-        blockUntilUserInput();
+        blockUntilUserPressesEnter();
 
-        shutdownSimulation(executorService);
-
-        cache.close();
-    }
-
-    private static void shutdownSimulation(ExecutorService executorService) {
-        System.out.println("Shutting down the simulation...");
-        executorService.shutdownNow();
-    }
-
-    private static void blockUntilUserInput() {
-        System.out.println("Press enter to end the simulation...");
-        Scanner scanner = new Scanner(System.in);
-        scanner.hasNext();
+        shutdownSimulation(executorService, cache);
     }
 
     private static ExecutorService startExecutingSimulation(Region<String, String> region) {
@@ -45,5 +32,17 @@ public class HelloWorld {
         executorService.submit(new RandomStockPriceGenerator(region));
         executorService.submit(new PollingStockTicker(region));
         return executorService;
+    }
+
+    private static void shutdownSimulation(ExecutorService executorService, ClientCache cache) {
+        System.out.println("Shutting down the simulation...");
+        executorService.shutdownNow();
+        cache.close();
+    }
+
+    private static void blockUntilUserPressesEnter() {
+        System.out.println("Press enter to end the simulation...");
+        Scanner scanner = new Scanner(System.in);
+        scanner.nextLine();
     }
 }

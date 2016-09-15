@@ -19,7 +19,6 @@ public class RandomStockPriceGenerator implements Runnable {
     @Override
     public void run() {
         while (!Thread.currentThread().isInterrupted()) {
-
             String tickerSymbol = getRandomTickerSymbol();
             region.put(tickerSymbol, getRandomPrice());
         }
