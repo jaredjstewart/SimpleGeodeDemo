@@ -2,32 +2,36 @@ package com.jaredjstewart;
 
 import com.gemstone.gemfire.cache.Region;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Random;
+import java.util.Set;
 
 
 public class PollingStockTicker implements Runnable {
     private Region<String, String> region;
-    private List<String> tickerSymbols;
 
-    public PollingStockTicker(Region<String, String> region, List<String> tickerSymbols) {
+    public PollingStockTicker(Region<String, String> region) {
         this.region = region;
-        this.tickerSymbols = tickerSymbols;
     }
 
     @Override
     public void run() {
         while (!Thread.currentThread().isInterrupted()) {
-            System.out.println("==============");
-            for (String symbol : tickerSymbols) {
-                System.out.format("Price for [%s] is %s\n", symbol, region.get(symbol));
-            }
+            //TODO: This is a workaround to avoid calling .size() and .entrySet() due to [https://issues.apache.org/jira/browse/GEODE-1887]
+            printPriceForEveryStock();
+
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException ex) {
-                Thread.currentThread().interrupt();  // set interrupt flag
+                Thread.currentThread().interrupt();
             }
+        }
+    }
+
+    private void printPriceForEveryStock() {
+        Set<String> keySet = region.keySetOnServer();
+        System.out.println("==============");
+
+        for (String key : keySet) {
+            System.out.format("Price for [%s] is %s\n", key, region.get(key));
         }
     }
 }

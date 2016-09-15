@@ -2,18 +2,18 @@ package com.jaredjstewart;
 
 import com.gemstone.gemfire.cache.Region;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
 
 public class RandomStockPriceGenerator implements Runnable {
-    private Region<String, String> region;
-    private List<String> tickerSymbols;
-    private Random random = new Random();
+    private final List<String> tickerSymbols = Arrays.asList("AAPL", "AMZN", "DELL", "GOOG");
+    private final Region<String, String> region;
+    private final Random random = new Random();
 
-    public RandomStockPriceGenerator(Region<String, String> region, List<String> tickerSymbols) {
+    public RandomStockPriceGenerator(Region<String, String> region) {
         this.region = region;
-        this.tickerSymbols = tickerSymbols;
     }
 
     @Override
