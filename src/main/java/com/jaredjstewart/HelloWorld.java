@@ -18,7 +18,7 @@ public class HelloWorld {
 
         Region<String, String> region = cache
                 .<String, String>createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY)
-                .create("regionB");
+                .create("regionA");
 
         ExecutorService executorService = startExecutingSimulation(region);
         blockUntilUserPressesEnter();
