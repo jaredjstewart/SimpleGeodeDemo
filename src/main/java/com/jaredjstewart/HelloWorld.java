@@ -8,6 +8,8 @@ import com.gemstone.gemfire.cache.client.ClientRegionShortcut;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class HelloWorld {
 
@@ -20,19 +22,21 @@ public class HelloWorld {
                 .<String, String>createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY)
                 .create("regionA");
 
-        ExecutorService executorService = startExecutingSimulation(region);
+        ExecutorService priceGeneratorExecutorService = startSimulation(region);
         blockUntilUserPressesEnter();
 
-        shutdownSimulation(executorService, cache);
+        shutdownSimulation(priceGeneratorExecutorService, cache);
     }
 
-    private static ExecutorService startExecutingSimulation(Region<String, String> region) {
+    private static ExecutorService startSimulation(Region<String, String> region) {
         System.out.println("Starting the stock price simulation...");
-        ExecutorService executorService = Executors.newFixedThreadPool(2);
-        executorService.submit(new RandomStockPriceGenerator(region));
-        executorService.submit(new PollingStockTicker(region));
+        ScheduledExecutorService executorService = Executors.newScheduledThreadPool(2);
+        executorService.scheduleAtFixedRate(new PollingStockTicker(region), 0, 2, TimeUnit.SECONDS);
+        executorService.scheduleWithFixedDelay(new RandomStockPriceGenerator(region), 0, 1, TimeUnit.MILLISECONDS);
+
         return executorService;
     }
+
 
     private static void shutdownSimulation(ExecutorService executorService, ClientCache cache) {
         System.out.println("Shutting down the simulation...");

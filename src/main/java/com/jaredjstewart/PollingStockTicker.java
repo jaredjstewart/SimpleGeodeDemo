@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Set;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 
 public class PollingStockTicker implements Runnable {
@@ -19,15 +20,7 @@ public class PollingStockTicker implements Runnable {
 
     @Override
     public void run() {
-        while (!Thread.currentThread().isInterrupted()) {
             printPriceForEveryStock();
-
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException ex) {
-                Thread.currentThread().interrupt();
-            }
-        }
     }
 
     private void printPriceForEveryStock() {

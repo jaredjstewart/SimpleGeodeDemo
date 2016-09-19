@@ -36,3 +36,13 @@ server2  | 192.168.1.19(server2:24396)<ec><v2>:1026
   ```
   gfsh>create region --name=regionA --type=REPLICATE
   ```
+  
+  6. Let's start the simulation:
+  ```
+  $ ./gradlew run
+  ```
+  
+  7. We can query our stock simulation data on Geode
+  ```
+  gfsh> query --region=regionA --query="select key, value from /regionA.entrySet"
+  ```
