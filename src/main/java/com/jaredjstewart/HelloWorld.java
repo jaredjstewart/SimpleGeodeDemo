@@ -5,6 +5,7 @@ import com.gemstone.gemfire.cache.client.ClientCache;
 import com.gemstone.gemfire.cache.client.ClientCacheFactory;
 import com.gemstone.gemfire.cache.client.ClientRegionShortcut;
 
+import java.math.BigDecimal;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -18,17 +19,17 @@ public class HelloWorld {
                 .addPoolLocator("localhost", 10334)
                 .create();
 
-        Region<String, String> region = cache
-                .<String, String>createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY)
+        Region<String, BigDecimal> region = cache
+                .<String, BigDecimal>createClientRegionFactory(ClientRegionShortcut.CACHING_PROXY)
                 .create("regionA");
 
-        ExecutorService priceGeneratorExecutorService = startSimulation(region);
+        ExecutorService executorService = startSimulation(region);
         blockUntilUserPressesEnter();
 
-        shutdownSimulation(priceGeneratorExecutorService, cache);
+        shutdownSimulation(executorService, cache);
     }
 
-    private static ExecutorService startSimulation(Region<String, String> region) {
+    private static ExecutorService startSimulation(Region<String, BigDecimal> region) {
         System.out.println("Starting the stock price simulation...");
         ScheduledExecutorService executorService = Executors.newScheduledThreadPool(2);
         executorService.scheduleAtFixedRate(new PollingStockTicker(region), 0, 2, TimeUnit.SECONDS);
